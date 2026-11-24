@@ -40,7 +40,7 @@ fi
 fatal_scan_rc=0
 grep -Eiq 'FATAL|SIGABRT|SIGSEGV|segfault|segmentation fault|aborted|stack smashing detected|stack buffer overflow|AddressSanitizer|ThreadSanitizer|GPU process isn.t usable' "$QA/runtime-selftest.out" || fatal_scan_rc=$?
 case "$fatal_scan_rc" in
-  0) printf 'RUNTIME_SELFTEST=FAIL child fatal in captured output; inspect private QA log.\n' >&2; exit 30 ;;
+  0) printf 'RUNTIME_SELFTEST=FAIL fatal child diagnostic in captured output; inspect private QA log.\n' >&2; exit 30 ;;
   1) ;;
   *) printf 'RUNTIME_SELFTEST=FAIL captured output scan error.\n' >&2; exit 31 ;;
 esac
