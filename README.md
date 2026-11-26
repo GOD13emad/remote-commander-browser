@@ -6,9 +6,9 @@ A hardened, cross-platform native browser shell for Remote Commander workflows, 
 
 ## Release status
 
-**Published Stable v0.8.1 — live local Commander monitoring, cross-platform.** Current development `main` includes post-release work and is not itself a published update.
+**[Published Stable v0.8.1](https://github.com/GOD13emad/remote-commander-browser/releases/tag/v0.8.1) — live local Commander monitoring, cross-platform.** Current development `main` includes post-release work and is not itself a published update. [v0.8.3-rc.3](https://github.com/GOD13emad/remote-commander-browser/releases/tag/v0.8.3-rc.3) is an opt-in prerelease, not Stable.
 
-Canonical source: [TandemVector-Labs/remote-commander-browser](https://github.com/TandemVector-Labs/remote-commander-browser). Previous Usefull-Skills paths are redirects; update new clone/setup instructions to use the canonical path.
+Canonical source and release repository: [GOD13emad/remote-commander-browser](https://github.com/GOD13emad/remote-commander-browser). The [TandemVector Labs collaboration fork](https://github.com/TandemVector-Labs/remote-commander-browser-fork) is separate. The former organization repository URL redirects to the original repository; use the current canonical path for new instructions.
 
 v0.8.1 keeps Browser-origin command authority disabled, but adds a native live monitor panel fed by an owner-private local snapshot written by Remote Commander Core. The panel reports Core identity, GUI-control readiness, background-browser readiness, durable workflow count, Agent Extension count, and active operation/lock counts on both Windows and Linux. Existing chat/project binding evidence remains an independent fail-closed read-only layer.
 
