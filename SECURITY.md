@@ -10,7 +10,7 @@ Never attach or commit the runtime profile (`~/.config/chatgpt-cef-v2`), Chromiu
 
 ## Reporting a vulnerability
 
-Use the company's private security reporting channel for vulnerabilities involving authentication, sandbox escape, origin validation, permission bypass, credential exposure or arbitrary code execution. Do not publish working exploits or private account data in a public issue.
+Use the [private vulnerability reporting form](https://github.com/GOD13emad/remote-commander-browser/security/advisories/new) (Security → Report a vulnerability). Include the affected version or commit, impact and a minimized reproduction with redacted diagnostics. If the form is unavailable, request a confidential maintainer contact without sharing vulnerability details publicly. This includes authentication, sandbox escape, origin validation, permission bypass, credential exposure and arbitrary code execution. Do not publish working exploits or private account data in a public issue.
 
 ## Security invariants
 

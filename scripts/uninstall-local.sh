@@ -8,6 +8,16 @@ RUNTIME="$APPROOT/runtime-v$VERSION"
 LAUNCHER="$HOME/.local/bin/chatgpt-cef-v2"
 DESKTOP="$HOME/.local/share/applications/chatgpt-cef-v2.desktop"
 
+# Fail closed if HOME or any parent of HOME is a symlink or a noncanonical
+# alias. Checking only ancestors *below* HOME misses a linked HOME itself and
+# can delete the referenced external runtime, launcher, desktop, or profile.
+home_canonical=$(realpath -e -- "$HOME" 2>/dev/null) || {
+  printf 'UNINSTALL_HOME_REPARSE_REFUSED\n' >&2; exit 49
+}
+if [[ "$HOME" != "$home_canonical" ]]; then
+  printf 'UNINSTALL_HOME_REPARSE_REFUSED\n' >&2; exit 49
+fi
+
 # Do not let an old-version uninstall break a newer active SUID sandbox.
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z][0-9A-Za-z.-]*)?$ ]] || { printf 'UNINSTALL_VERSION_INVALID\n' >&2; exit 40; }
 # Validate every affected ancestor below HOME before uninstall, sudo or profile purge.
@@ -51,10 +61,26 @@ if [[ -L "$LAUNCHER" ]]; then
   exit 45
 fi
 if [[ -f "$LAUNCHER" ]]; then
+  # A newer launcher may retain the old RUNTIME assignment before overriding it.
+  # Do not treat grep's any-line match as proof that the old runtime is active.
+  # Match literal assignments even under export or on a shared shell line.
+  # Ambiguous launcher source must never authorize deleting the shared launcher.
+  runtime_assignments=$(awk -F'RUNTIME=' '{n += NF - 1} END {print n+0}' "$LAUNCHER")
+  if (( runtime_assignments > 1 )); then
+    printf 'UNINSTALL_LAUNCHER_RUNTIME_AMBIGUOUS\n' >&2; exit 48
+  fi
   literal_home="RUNTIME=\"\$HOME/.local/share/chatgpt-cef-v2/runtime-v$VERSION\""
   if grep -Fxq "RUNTIME=$RUNTIME" "$LAUNCHER" ||
      grep -Fxq "RUNTIME=\"$RUNTIME\"" "$LAUNCHER" ||
      grep -Fxq "$literal_home" "$LAUNCHER"; then
+    # A stale RUNTIME assignment does not establish which version
+    # an arbitrary launcher actually executes. Reject ambiguity before
+    # deleting shared launcher, desktop, or a requested user profile.
+    mentioned_versions=$(grep -Eo 'runtime-v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z][0-9A-Za-z.-]*)?' "$LAUNCHER" || true)
+    if [[ -n "$mentioned_versions" ]] &&
+       grep -Fvx "runtime-v$VERSION" <<< "$mentioned_versions" >/dev/null; then
+      printf 'UNINSTALL_LAUNCHER_RUNTIME_AMBIGUOUS\n' >&2; exit 48
+    fi
     active_launcher=true
   fi
 fi
